@@ -1,13 +1,5 @@
-import os, sys
-os.add_dll_directory(r"C:\Users\Nate\Documents\gtsam\build\bin\Release")
-sys.path.append(r"C:\Users\Nate\Documents\gtsam\build\python")
-
-
 import numpy as np
 import gtsam
-
-
-
 
 def X(i): return gtsam.symbol('x', i)  # pose
 def V(i): return gtsam.symbol('v', i)  # velocity
