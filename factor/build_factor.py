@@ -236,14 +236,19 @@ class BuildFactor:
         self.virtual_landmarks[fid] = predicted_world.copy()
 
         # initialize virtual landmark if needed
+
+        # Always refresh timestamp so landmark never falls out
+        timestamps[lkey] = timestamp
+
         if not self.smoother_estimate.exists(lkey):
             pt = gtsam.Point3(*predicted_world)
             initial.insert(lkey, pt)
             timestamps[lkey] = timestamp
 
-        # Weak prior to avoid underconstrained system
+            # weak prior
             weak_prior = gtsam.noiseModel.Isotropic.Sigma(3, 5.0)
             factors.add(gtsam.PriorFactorPoint3(lkey, pt, weak_prior))
+
 
         # Add projection factor
         pose_key = X(self.frame_idx)
