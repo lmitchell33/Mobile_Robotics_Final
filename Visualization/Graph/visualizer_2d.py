@@ -57,23 +57,22 @@ class DynamSLAMVisualizer2D:
         self.ax.set_ylabel("Y (m)")
         self.ax.grid(True)
 
-        # ---- Draw static wall segments ----
+        # Draw static wall segments 
         if self.static_map is not None:
-            for seg in self.static_map:
-                p1, p2 = seg
-                xs = [p1[0], p2[0]]
-                ys = [p1[1], p2[1]]
+            if len(self.static_map.shape) == 2 and self.static_map.shape[1] == 2:
+                # static landmarks
+                xs = self.static_map[:, 0]
+                ys = self.static_map[:, 1]
+                self.lm_scatter = self.ax.scatter(xs, ys, c="orange", s=40, label="Landmarks")
+            else:
+                # wall segments
+                for seg in self.static_map:
+                    p1, p2 = seg
+                    xs = [p1[0], p2[0]]
+                    ys = [p1[1], p2[1]]
+                    line, = self.ax.plot(xs, ys, color="gray", linewidth=4, alpha=0.9)
+                    self.wall_artists.append(line)
 
-                line, = self.ax.plot(
-                    xs, ys,
-                    color="gray",
-                    linewidth=4,
-                    alpha=0.9,
-                    label="Wall" if len(self.wall_artists) == 0 else ""
-                )
-                self.wall_artists.append(line)
-
-        # Ground truth path
         if self.gt_xy is not None:
             self.gt_plot, = self.ax.plot(
                 self.gt_xy[:, 0], self.gt_xy[:, 1],
