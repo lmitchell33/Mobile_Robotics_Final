@@ -79,7 +79,7 @@ class DynamSLAMVisualizer2D:
                 'g--', linewidth=1.5, label="Ground Truth"
             )
 
-        self.ax.set_xlim(-10, 10)
+        self.ax.set_xlim(-25, 25)
         self.ax.set_ylim(-10, 10)
         self.ax.legend()
         return []
@@ -90,10 +90,12 @@ class DynamSLAMVisualizer2D:
         x, y, theta = self.poses[frame]
 
         # camera follow
-        self.view_center = smooth_follow((x, y), self.view_center)
-        cx, cy = self.view_center
-        self.ax.set_xlim(cx - 10, cx + 10)
-        self.ax.set_ylim(cy - 10, cy + 10)
+        # self.view_center = smooth_follow((x, y), self.view_center, 0.5)
+        # cx, cy = self.view_center
+        cx, cy = x, y
+        # self.view_center = (cx, cy)
+        self.ax.set_xlim(cx - 100, cx + 100)
+        self.ax.set_ylim(cy - 100, cy + 100)
 
         # Robot dot
         self.robot_dot.set_data([x], [y])

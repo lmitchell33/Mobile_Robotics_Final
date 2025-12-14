@@ -2,9 +2,10 @@ import numpy as np
 import gtsam
 
 # TODO: Update the covar values
-def imu_preintegration_factory(bias: gtsam.imuBias.ConstantBias, gravity=9.81, gryo_cov=1e-5, accel_cov=1e-5, integration_cov=1e-5):
+def imu_preintegration_factory(bias: gtsam.imuBias.ConstantBias, gravity=9.81, gryo_cov=1e-3, accel_cov=1e-2, integration_cov=1e-4):
     """ Factor method to create an instance of my IMU Preintegrator class"""
     params = gtsam.PreintegrationParams.MakeSharedU(gravity)
+    params.n_gravity = np.array([0.0, 0.0, -gravity])
     params.setGyroscopeCovariance(np.eye(3) * gryo_cov)
     params.setAccelerometerCovariance(np.eye(3) * accel_cov)
     params.setIntegrationCovariance(np.eye(3) * integration_cov)
@@ -23,6 +24,12 @@ class IMUPreintegrator:
 
     def integrate_measurement(self, accel: np.ndarray, omega: np.ndarray, dt: float):
         self.preintegration.integrateMeasurement(accel, omega, dt)
+
+    def reset(self):
+        self.preintegration = gtsam.PreintegratedImuMeasurements(self._params, self._bias)
+
+    def set_bias(self, new_bias):
+        self._bias = new_bias
 
     def get_deltas(self):
         delta_position = self.preintegration.deltaPij()
